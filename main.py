@@ -104,11 +104,19 @@ def reminder_job():
 # SCHEDULER
 # -----------------------------
 scheduler = BackgroundScheduler()
-scheduler.add_job(reminder_job, "interval", minutes=1)
-
+scheduler.add_job(
+    reminder_job,
+    "interval",
+    minutes=1,
+    max_instances=3,
+    coalesce=True,
+    misfire_grace_time=120
+)
 @app.on_event("startup")
 def start_scheduler():
     if not scheduler.running:
         scheduler.start()
+        print("Scheduler running at IST:", datetime.now(IST))
+
 
 
