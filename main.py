@@ -105,13 +105,10 @@ def reminder_job():
 # -----------------------------
 scheduler = BackgroundScheduler()
 scheduler.add_job(reminder_job, "interval", minutes=1)
-scheduler.start()
 
-# -----------------------------
-# KEEP ALIVE
-# -----------------------------
-try:
-    while True:
-        time.sleep(5)
-except (KeyboardInterrupt, SystemExit):
-    scheduler.shutdown()
+@app.on_event("startup")
+def start_scheduler():
+    if not scheduler.running:
+        scheduler.start()
+
+
